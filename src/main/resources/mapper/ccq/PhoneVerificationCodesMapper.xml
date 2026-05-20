@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xingyu.ccq.mapper.PhoneVerificationCodesMapper">
+    
+    <resultMap type="PhoneVerificationCodes" id="PhoneVerificationCodesResult">
+        <result property="id"    column="id"    />
+        <result property="phone"    column="phone"    />
+        <result property="code"    column="code"    />
+        <result property="expiresAt"    column="expires_at"    />
+        <result property="used"    column="used"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="attemptCount"    column="attempt_count"    />
+    </resultMap>
+
+    <sql id="selectPhoneVerificationCodesVo">
+        select id, phone, code, expires_at, used, created_at, attempt_count from phone_verification_codes
+    </sql>
+
+    <select id="selectPhoneVerificationCodesList" parameterType="PhoneVerificationCodes" resultMap="PhoneVerificationCodesResult">
+        <include refid="selectPhoneVerificationCodesVo"/>
+        <where>  
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="expiresAt != null "> and expires_at = #{expiresAt}</if>
+            <if test="used != null "> and used = #{used}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="attemptCount != null "> and attempt_count = #{attemptCount}</if>
+        </where>
+    </select>
+    
+    <select id="selectPhoneVerificationCodesById" parameterType="Long" resultMap="PhoneVerificationCodesResult">
+        <include refid="selectPhoneVerificationCodesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPhoneVerificationCodes" parameterType="PhoneVerificationCodes" useGeneratedKeys="true" keyProperty="id">
+        insert into phone_verification_codes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="phone != null">phone,</if>
+            <if test="code != null">code,</if>
+            <if test="expiresAt != null">expires_at,</if>
+            <if test="used != null">used,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="attemptCount != null">attempt_count,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="phone != null">#{phone},</if>
+            <if test="code != null">#{code},</if>
+            <if test="expiresAt != null">#{expiresAt},</if>
+            <if test="used != null">#{used},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="attemptCount != null">#{attemptCount},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePhoneVerificationCodes" parameterType="PhoneVerificationCodes">
+        update phone_verification_codes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="expiresAt != null">expires_at = #{expiresAt},</if>
+            <if test="used != null">used = #{used},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="attemptCount != null">attempt_count = #{attemptCount},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePhoneVerificationCodesById" parameterType="Long">
+        delete from phone_verification_codes where id = #{id}
+    </delete>
+
+    <delete id="deletePhoneVerificationCodesByIds" parameterType="String">
+        delete from phone_verification_codes where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
